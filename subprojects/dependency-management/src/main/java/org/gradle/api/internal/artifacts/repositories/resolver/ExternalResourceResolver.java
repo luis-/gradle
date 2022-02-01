@@ -409,7 +409,7 @@ public abstract class ExternalResourceResolver<T extends ModuleComponentResolveM
         @Override
         public void resolveArtifacts(ComponentResolveMetadata component, ConfigurationMetadata variant, BuildableComponentArtifactsResolveResult result) {
             T moduleMetaData = getSupportedMetadataType().cast(unwrap(component));
-            resolveModuleArtifacts(moduleMetaData, variant, result);
+            resolveModuleArtifacts(moduleMetaData, result);
         }
 
         private ComponentResolveMetadata unwrap(ComponentResolveMetadata original) {
@@ -419,7 +419,7 @@ public abstract class ExternalResourceResolver<T extends ModuleComponentResolveM
             return original;
         }
 
-        protected abstract void resolveModuleArtifacts(T module, ConfigurationMetadata variant, BuildableComponentArtifactsResolveResult result);
+        protected abstract void resolveModuleArtifacts(T module, BuildableComponentArtifactsResolveResult result);
 
         protected abstract void resolveMetaDataArtifacts(T module, BuildableArtifactSetResolveResult result);
 
