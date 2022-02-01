@@ -138,6 +138,10 @@ public class DefaultMavenModuleResolveMetadata extends AbstractLazyModuleCompone
         if (name.equals("compile") || name.equals("runtime") || name.equals("default") || name.equals("test")) {
             String type = isKnownJarPackaging() ? "jar" : packaging;
             artifacts = ImmutableList.of(new DefaultModuleComponentArtifactMetadata(getId(), new DefaultIvyArtifactName(getId().getModule(), type, type)));
+        } else if (isKnownJarPackaging()) {
+            artifacts = ImmutableList.of(new DefaultModuleComponentArtifactMetadata(getId(), new DefaultIvyArtifactName(getId().getModule(), "jar", "jar")));
+        } else if (isPomPackaging()) {
+            artifacts = ImmutableList.of(new DefaultModuleComponentArtifactMetadata(getId(), new DefaultIvyArtifactName(getId().getModule(), "jar", "jar")));
         } else {
             artifacts = ImmutableList.of();
         }

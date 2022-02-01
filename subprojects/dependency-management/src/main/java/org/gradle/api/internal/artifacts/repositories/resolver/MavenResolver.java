@@ -228,11 +228,6 @@ public class MavenResolver extends ExternalResourceResolver<MavenModuleResolveMe
             } else if (!module.getVariants().isEmpty() || module.getVariantDerivationStrategy().derivesVariants()) {
                 // Modules with variants or derived variants, artifacts are determined by looking at the metadata
                 result.resolved(new MetadataSourcedComponentArtifacts());
-            } else if (module.isKnownJarPackaging()) {
-                // If we have no variant information and we recognize the packaging in the Maven metadata
-                // we can try to return the jar artifact
-                ModuleComponentArtifactMetadata artifact = module.artifact("jar", "jar", null);
-                result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifact)));
             }
         }
 
@@ -250,17 +245,17 @@ public class MavenResolver extends ExternalResourceResolver<MavenModuleResolveMe
     private class MavenRemoteRepositoryAccess extends RemoteRepositoryAccess {
         @Override
         protected void resolveModuleArtifacts(MavenModuleResolveMetadata module, BuildableComponentArtifactsResolveResult result) {
-            if (module.isPomPackaging()) {
-                result.resolved(new FixedComponentArtifacts(findOptionalArtifacts(module, "jar", null)));
-            } else {
-                ModuleComponentArtifactMetadata artifactMetaData = module.artifact(module.getPackaging(), module.getPackaging(), null);
+            // Try to probe for possible artifacts
+            // We hit this case when the metadata does not have enough information to infer what the artifacts may be
+            // So we look for an artifact based on the packaging in the POM. if that artifact exists, that's what we return as available.
+            // If it does not exist, we assume the regular jar is the artifact that's available.
+            ModuleComponentArtifactMetadata artifactMetaData = module.artifact(module.getPackaging(), module.getPackaging(), null);
 
-                if (createArtifactResolver(module.getSources()).artifactExists(artifactMetaData, new DefaultResourceAwareResolveResult())) {
-                    result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifactMetaData)));
-                } else {
-                    ModuleComponentArtifactMetadata artifact = module.artifact("jar", "jar", null);
-                    result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifact)));
-                }
+            if (createArtifactResolver(module.getSources()).artifactExists(artifactMetaData, new DefaultResourceAwareResolveResult())) {
+                result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifactMetaData)));
+            } else {
+                ModuleComponentArtifactMetadata artifact = module.artifact("jar", "jar", null);
+                result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifact)));
             }
         }
 
