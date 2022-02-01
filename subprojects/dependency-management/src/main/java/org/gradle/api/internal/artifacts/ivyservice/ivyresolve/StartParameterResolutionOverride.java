@@ -185,6 +185,12 @@ public class StartParameterResolutionOverride {
         }
 
         @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            // assume the artifact exists since we do not know
+            return true;
+        }
+
+        @Override
         public MetadataFetchingCost estimateMetadataFetchingCost(ModuleComponentIdentifier moduleComponentIdentifier) {
             return MetadataFetchingCost.CHEAP;
         }

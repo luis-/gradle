@@ -139,6 +139,14 @@ public class ProjectDependencyResolver implements ComponentMetaDataResolver, Dep
         }
     }
 
+    @Override
+    public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        if (isProjectModule(artifact.getComponentId())) {
+            return artifactResolver.resolveOptionalArtifact(artifact, moduleSources);
+        }
+        return true;
+    }
+
     private boolean isProjectModule(ComponentIdentifier componentId) {
         return componentId instanceof ProjectComponentIdentifier;
     }

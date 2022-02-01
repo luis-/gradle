@@ -132,6 +132,12 @@ public abstract class DefaultArtifactSet implements ArtifactSet, ResolvedVariant
                 continue;
             }
 
+            if (artifact.probeForExistence()) {
+                if (!artifactResolver.resolveOptionalArtifact(artifact, moduleSources)) {
+                    continue;
+                }
+            }
+
             ResolvableArtifact resolvedArtifact = allResolvedArtifacts.get(artifact.getId());
             if (resolvedArtifact == null) {
                 ValueCalculator<File> artifactCalculator;

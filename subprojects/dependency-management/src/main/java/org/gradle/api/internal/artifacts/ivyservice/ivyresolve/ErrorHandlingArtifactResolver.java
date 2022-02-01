@@ -48,4 +48,9 @@ public class ErrorHandlingArtifactResolver implements ArtifactResolver {
             result.failed(new ArtifactResolveException(artifact.getId(), t));
         }
     }
+
+    @Override
+    public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        return resolver.resolveOptionalArtifact(artifact, moduleSources);
+    }
 }

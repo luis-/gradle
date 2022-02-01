@@ -66,6 +66,11 @@ public class BaseModuleComponentRepositoryAccess implements ModuleComponentRepos
     }
 
     @Override
+    public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        return delegate.artifactExists(artifact, moduleSources);
+    }
+
+    @Override
     public MetadataFetchingCost estimateMetadataFetchingCost(ModuleComponentIdentifier moduleComponentIdentifier) {
         return delegate.estimateMetadataFetchingCost(moduleComponentIdentifier);
     }

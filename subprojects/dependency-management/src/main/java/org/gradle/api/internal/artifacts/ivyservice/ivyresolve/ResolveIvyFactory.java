@@ -215,6 +215,11 @@ public class ResolveIvyFactory {
         public void resolveArtifact(final ComponentArtifactMetadata artifact, final ModuleSources moduleSources, final BuildableArtifactResolveResult result) {
             delegate.getArtifactResolver().resolveArtifact(artifact, moduleSources, result);
         }
+
+        @Override
+        public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return delegate.getArtifactResolver().resolveOptionalArtifact(artifact, moduleSources);
+        }
     }
 
     private static class DefaultMetadataResolutionContext implements MetadataResolutionContext {

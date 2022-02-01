@@ -32,4 +32,11 @@ public interface ArtifactResolver {
      * Resolves the given artifact. Any failures are packaged up in the result.
      */
     void resolveArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources, BuildableArtifactResolveResult result);
+
+    /**
+     * Should the optional artifact be resolved?
+     *
+     * This does not mean that the artifact exists, only that the artifact should be attempted to be resolved.
+     */
+    boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources);
 }

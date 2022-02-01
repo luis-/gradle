@@ -95,4 +95,9 @@ public class NoRepositoriesResolver implements ComponentResolvers, DependencyToC
     public void resolveArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources, BuildableArtifactResolveResult result) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        throw new UnsupportedOperationException();
+    }
 }

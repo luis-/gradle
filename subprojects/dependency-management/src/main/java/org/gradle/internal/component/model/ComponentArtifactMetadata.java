@@ -43,4 +43,8 @@ public interface ComponentArtifactMetadata {
      * Collects the build dependencies of this artifact, which are required to build this artifact
      */
     TaskDependency getBuildDependencies();
+
+    default boolean probeForExistence() {
+        return false;
+    }
 }

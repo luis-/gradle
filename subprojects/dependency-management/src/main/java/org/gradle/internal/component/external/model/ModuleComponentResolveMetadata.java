@@ -61,6 +61,11 @@ public interface ModuleComponentResolveMetadata extends ComponentResolveMetadata
     ModuleComponentArtifactMetadata artifact(String type, @Nullable String extension, @Nullable String classifier);
 
     /**
+     * Creates an artifact for this module that may or may not exist. Does not mutate this metadata.
+     */
+    ModuleComponentArtifactMetadata optionalArtifact(String type, @Nullable String extension, @Nullable String classifier);
+
+    /**
      * Returns the variants of this component
      */
     ImmutableList<? extends ComponentVariant> getVariants();

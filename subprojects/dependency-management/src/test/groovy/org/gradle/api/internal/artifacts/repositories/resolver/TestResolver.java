@@ -24,6 +24,8 @@ import org.gradle.internal.component.external.model.ModuleComponentArtifactIdent
 import org.gradle.internal.component.external.model.ModuleComponentArtifactMetadata;
 import org.gradle.internal.component.external.model.ModuleComponentResolveMetadata;
 import org.gradle.internal.component.external.model.MutableModuleComponentResolveMetadata;
+import org.gradle.internal.component.model.ComponentArtifactMetadata;
+import org.gradle.internal.component.model.ModuleSources;
 import org.gradle.internal.hash.Hasher;
 import org.gradle.internal.resolve.result.BuildableArtifactSetResolveResult;
 import org.gradle.internal.resolve.result.BuildableComponentArtifactsResolveResult;
@@ -68,6 +70,11 @@ public class TestResolver extends ExternalResourceResolver<ModuleComponentResolv
     @Override
     public ModuleComponentRepositoryAccess getRemoteAccess() {
         return new RemoteRepositoryAccess() {
+            @Override
+            public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+                return false;
+            }
+
             @Override
             protected void resolveModuleArtifacts(ModuleComponentResolveMetadata module, BuildableComponentArtifactsResolveResult result) {
                 throw new UnsupportedOperationException();

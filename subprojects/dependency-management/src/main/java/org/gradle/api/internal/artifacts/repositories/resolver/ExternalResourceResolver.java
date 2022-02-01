@@ -453,6 +453,11 @@ public abstract class ExternalResourceResolver<T extends ModuleComponentResolveM
         }
 
         @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return false;
+        }
+
+        @Override
         public MetadataFetchingCost estimateMetadataFetchingCost(ModuleComponentIdentifier moduleComponentIdentifier) {
             return MetadataFetchingCost.CHEAP;
         }
@@ -512,6 +517,11 @@ public abstract class ExternalResourceResolver<T extends ModuleComponentResolveM
             } catch (Exception e) {
                 result.failed(new ArtifactResolveException(artifact.getId(), e));
             }
+        }
+
+        @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return true;
         }
 
         @Override

@@ -61,6 +61,18 @@ public class ProjectArtifactResolver implements ArtifactResolver {
         }
     }
 
+    @Override
+    public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        LocalComponentArtifactMetadata projectArtifact = (LocalComponentArtifactMetadata) artifact;
+        ProjectComponentIdentifier projectId = (ProjectComponentIdentifier) artifact.getComponentId();
+        File localArtifactFile = projectStateRegistry.stateFor(projectId).fromMutableState(p -> projectArtifact.getFile());
+        if (localArtifactFile != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public ValueCalculator<File> resolveArtifactLater(ComponentArtifactMetadata artifact) {
         LocalComponentArtifactMetadata projectArtifact = (LocalComponentArtifactMetadata) artifact;
         ProjectComponentIdentifier projectId = (ProjectComponentIdentifier) artifact.getComponentId();

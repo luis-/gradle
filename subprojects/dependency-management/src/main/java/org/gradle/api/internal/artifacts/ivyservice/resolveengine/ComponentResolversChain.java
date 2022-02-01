@@ -131,6 +131,16 @@ public class ComponentResolversChain {
         }
 
         @Override
+        public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            for (ArtifactResolver resolver : resolvers) {
+                if (!resolver.resolveOptionalArtifact(artifact, moduleSources)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
         public void resolveArtifactsWithType(ComponentResolveMetadata component, ArtifactType artifactType, BuildableArtifactSetResolveResult result) {
             for (ArtifactResolver resolver : resolvers) {
                 if (result.hasResult()) {

@@ -55,6 +55,7 @@ import org.gradle.internal.resolve.result.BuildableArtifactSetResolveResult;
 import org.gradle.internal.resolve.result.BuildableComponentArtifactsResolveResult;
 import org.gradle.internal.resolve.result.BuildableModuleComponentMetaDataResolveResult;
 import org.gradle.internal.resolve.result.BuildableModuleVersionListingResolveResult;
+import org.gradle.internal.resolve.result.DefaultBuildableArtifactResolveResult;
 import org.gradle.internal.resolve.result.DefaultBuildableArtifactSetResolveResult;
 import org.gradle.util.internal.BuildCommencedTimeProvider;
 import org.slf4j.Logger;
@@ -62,6 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -300,6 +302,17 @@ public class CachingModuleComponentRepository implements ModuleComponentReposito
         }
 
         @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            DefaultBuildableArtifactResolveResult result = new DefaultBuildableArtifactResolveResult();
+            resolveArtifactFromCache(artifact, moduleSources, result);
+            if (result.hasResult() && result.getFailure()!=null) {
+                return false;
+            } else {
+                return delegate.getLocalAccess().artifactExists(artifact, moduleSources);
+            }
+        }
+
+        @Override
         public MetadataFetchingCost estimateMetadataFetchingCost(ModuleComponentIdentifier moduleComponentIdentifier) {
             ModuleMetadataCache.CachedMetadata cachedMetadata = moduleMetadataCache.getCachedModuleDescriptor(delegate, moduleComponentIdentifier);
             if (cachedMetadata == null) {
@@ -474,6 +487,18 @@ public class CachingModuleComponentRepository implements ModuleComponentReposito
                 moduleArtifactCache.store(artifactCacheKey(artifact.getId()), result.getResult(), cachingModuleSource.getDescriptorHash());
             } else if (failure instanceof ArtifactNotFoundException) {
                 moduleArtifactCache.storeMissing(artifactCacheKey(artifact.getId()), result.getAttempted(), cachingModuleSource.getDescriptorHash());
+            }
+        }
+
+        @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            if (delegate.getRemoteAccess().artifactExists(artifact, moduleSources)) {
+                return true;
+            } else {
+                ModuleDescriptorHashModuleSource cachingModuleSource = findCachingModuleSource(moduleSources);
+                // TODO: This should have the places we checked
+                moduleArtifactCache.storeMissing(artifactCacheKey(artifact.getId()), Collections.emptyList(), cachingModuleSource.getDescriptorHash());
+                return false;
             }
         }
 

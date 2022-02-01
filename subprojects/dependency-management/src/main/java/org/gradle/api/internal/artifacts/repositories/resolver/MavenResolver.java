@@ -34,6 +34,7 @@ import org.gradle.internal.component.external.model.ModuleComponentArtifactIdent
 import org.gradle.internal.component.external.model.ModuleComponentArtifactMetadata;
 import org.gradle.internal.component.external.model.maven.MavenModuleResolveMetadata;
 import org.gradle.internal.component.external.model.maven.MutableMavenModuleResolveMetadata;
+import org.gradle.internal.component.model.ComponentArtifactMetadata;
 import org.gradle.internal.component.model.ComponentOverrideMetadata;
 import org.gradle.internal.component.model.ModuleSources;
 import org.gradle.internal.component.model.MutableModuleSources;
@@ -225,8 +226,10 @@ public class MavenResolver extends ExternalResourceResolver<MavenModuleResolveMe
             if (module.isRelocated()) {
                 // Relocated modules have no artifacts
                 result.resolved(new FixedComponentArtifacts(Collections.emptyList()));
-            } else if (!module.getVariants().isEmpty() || module.getVariantDerivationStrategy().derivesVariants() || module.isKnownJarPackaging()) {
+            } else if (!module.getVariants().isEmpty() || module.getVariantDerivationStrategy().derivesVariants()) {
                 // Modules with variants or derived variants, artifacts are determined by looking at the metadata
+                result.resolved(new MetadataSourcedComponentArtifacts());
+            } else if (module.isPomPackaging() || module.isKnownJarPackaging()) {
                 result.resolved(new MetadataSourcedComponentArtifacts());
             }
         }
@@ -240,26 +243,28 @@ public class MavenResolver extends ExternalResourceResolver<MavenModuleResolveMe
         protected void resolveSourceArtifacts(MavenModuleResolveMetadata module, BuildableArtifactSetResolveResult result) {
             // Source artifacts are optional, so we need to probe for them remotely
         }
+
+        @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            // Need to assume that the artifact exists
+            return true;
+        }
     }
 
     private class MavenRemoteRepositoryAccess extends RemoteRepositoryAccess {
         @Override
         protected void resolveModuleArtifacts(MavenModuleResolveMetadata module, BuildableComponentArtifactsResolveResult result) {
-            if (module.isPomPackaging()) {
-                result.resolved(new FixedComponentArtifacts(findOptionalArtifacts(module, "jar", null)));
-            } else {
-                // Try to probe for possible artifacts
-                // We hit this case when the metadata does not have enough information to infer what the artifacts may be
-                // So we look for an artifact based on the packaging in the POM. if that artifact exists, that's what we return as available.
-                // If it does not exist, we assume the regular jar is the artifact that's available.
-                ModuleComponentArtifactMetadata artifactMetaData = module.artifact(module.getPackaging(), module.getPackaging(), null);
+            // Try to probe for possible artifacts
+            // We hit this case when the metadata does not have enough information to infer what the artifacts may be
+            // So we look for an artifact based on the packaging in the POM. if that artifact exists, that's what we return as available.
+            // If it does not exist, we assume the regular jar is the artifact that's available.
+            ModuleComponentArtifactMetadata artifactMetaData = module.artifact(module.getPackaging(), module.getPackaging(), null);
 
-                if (createArtifactResolver(module.getSources()).artifactExists(artifactMetaData, new DefaultResourceAwareResolveResult())) {
-                    result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifactMetaData)));
-                } else {
-                    ModuleComponentArtifactMetadata artifact = module.artifact("jar", "jar", null);
-                    result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifact)));
-                }
+            if (createArtifactResolver(module.getSources()).artifactExists(artifactMetaData, new DefaultResourceAwareResolveResult())) {
+                result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifactMetaData)));
+            } else {
+                ModuleComponentArtifactMetadata artifact = module.artifact("jar", "jar", null);
+                result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifact)));
             }
         }
 
@@ -271,6 +276,11 @@ public class MavenResolver extends ExternalResourceResolver<MavenModuleResolveMe
         @Override
         protected void resolveSourceArtifacts(MavenModuleResolveMetadata module, BuildableArtifactSetResolveResult result) {
             result.resolved(findOptionalArtifacts(module, "source", "sources"));
+        }
+
+        @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return createArtifactResolver(moduleSources).artifactExists((ModuleComponentArtifactMetadata)artifact, new DefaultResourceAwareResolveResult());
         }
     }
 

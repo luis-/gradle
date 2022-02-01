@@ -233,4 +233,16 @@ public class LocalLibraryDependencyResolver implements DependencyToComponentIdRe
         }
     }
 
+    @Override
+    public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        if (isLibrary(artifact.getComponentId())) {
+            if (artifact instanceof PublishArtifactLocalArtifactMetadata) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

@@ -201,6 +201,11 @@ public class DependencyVerifyingModuleComponentRepository implements ModuleCompo
             }
         }
 
+        @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return delegate.artifactExists(artifact, moduleSources);
+        }
+
         private ArtifactVerificationOperation.ArtifactKind determineArtifactKind(ComponentArtifactMetadata artifact) {
             ArtifactVerificationOperation.ArtifactKind artifactKind = ArtifactVerificationOperation.ArtifactKind.REGULAR;
             if (artifact instanceof ModuleDescriptorArtifactMetadata) {

@@ -30,6 +30,7 @@ import org.gradle.internal.component.model.ConfigurationMetadata;
 import org.gradle.internal.component.model.DefaultIvyArtifactName;
 import org.gradle.internal.component.model.ImmutableModuleSources;
 import org.gradle.internal.component.model.IvyArtifactName;
+import org.gradle.internal.component.model.ModuleComponentOptionalArtifactMetadata;
 import org.gradle.internal.component.model.ModuleSources;
 
 import javax.annotation.Nullable;
@@ -188,6 +189,12 @@ abstract class AbstractModuleComponentResolveMetadata implements ModuleComponent
     public ModuleComponentArtifactMetadata artifact(String type, @Nullable String extension, @Nullable String classifier) {
         IvyArtifactName ivyArtifactName = new DefaultIvyArtifactName(getModuleVersionId().getName(), type, extension, classifier);
         return new DefaultModuleComponentArtifactMetadata(getId(), ivyArtifactName);
+    }
+
+    @Override
+    public ModuleComponentArtifactMetadata optionalArtifact(String type, @Nullable String extension, @Nullable String classifier) {
+        IvyArtifactName ivyArtifactName = new DefaultIvyArtifactName(getModuleVersionId().getName(), type, extension, classifier);
+        return new ModuleComponentOptionalArtifactMetadata(getId(), ivyArtifactName);
     }
 
     /**

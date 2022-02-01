@@ -142,6 +142,11 @@ public class FilteredModuleComponentRepository implements ModuleComponentReposit
         }
 
         @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return delegate.artifactExists(artifact, moduleSources);
+        }
+
+        @Override
         public MetadataFetchingCost estimateMetadataFetchingCost(ModuleComponentIdentifier moduleComponentIdentifier) {
             return whenModulePresent(moduleComponentIdentifier.getModuleIdentifier(), moduleComponentIdentifier,
                     () -> delegate.estimateMetadataFetchingCost(moduleComponentIdentifier),

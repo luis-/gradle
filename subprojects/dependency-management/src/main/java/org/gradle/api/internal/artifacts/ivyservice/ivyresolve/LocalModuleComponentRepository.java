@@ -102,6 +102,11 @@ public class LocalModuleComponentRepository extends BaseModuleComponentRepositor
         }
 
         @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return false;
+        }
+
+        @Override
         public MetadataFetchingCost estimateMetadataFetchingCost(ModuleComponentIdentifier moduleComponentIdentifier) {
             return delegate.getRemoteAccess().estimateMetadataFetchingCost(moduleComponentIdentifier);
         }
@@ -131,6 +136,11 @@ public class LocalModuleComponentRepository extends BaseModuleComponentRepositor
 
         @Override
         public void resolveArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources, BuildableArtifactResolveResult result) {
+        }
+
+        @Override
+        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return false;
         }
 
         @Override

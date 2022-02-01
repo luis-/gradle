@@ -103,6 +103,15 @@ class RepositoryChainArtifactResolver implements ArtifactResolver, OriginArtifac
         }
     }
 
+    @Override
+    public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources sources) {
+        ModuleComponentRepository sourceRepository = findSourceRepository(sources);
+        if (!sourceRepository.getLocalAccess().artifactExists(artifact, sources)) {
+            return false;
+        }
+        return sourceRepository.getRemoteAccess().artifactExists(artifact, sources);
+    }
+
     private ModuleComponentRepository findSourceRepository(ModuleSources sources) {
         RepositoryChainModuleSource repositoryChainModuleSource = sources.getSource(RepositoryChainModuleSource.class).get();
         ModuleComponentRepository moduleVersionRepository = repositories.get(repositoryChainModuleSource.getRepositoryId());

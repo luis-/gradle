@@ -64,5 +64,10 @@ public interface ModuleComponentRepositoryAccess {
      */
     void resolveArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources, BuildableArtifactResolveResult result);
 
+    /**
+     * Checks the given modulesSources if the artifact exists.
+     */
+    boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources);
+
     MetadataFetchingCost estimateMetadataFetchingCost(ModuleComponentIdentifier moduleComponentIdentifier);
 }

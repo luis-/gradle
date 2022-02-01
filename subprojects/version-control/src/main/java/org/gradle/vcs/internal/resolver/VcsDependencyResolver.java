@@ -193,4 +193,9 @@ public class VcsDependencyResolver implements DependencyToComponentIdResolver, C
     @Override
     public void resolveArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources, BuildableArtifactResolveResult result) {
     }
+
+    @Override
+    public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        return true;
+    }
 }
