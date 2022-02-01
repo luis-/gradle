@@ -200,16 +200,12 @@ public class RealisedMavenModuleResolveMetadata extends AbstractRealisedModuleCo
 
     static ImmutableList<? extends ModuleComponentArtifactMetadata> getArtifactsForConfiguration(DefaultMavenModuleResolveMetadata metadata, String name) {
         ImmutableList<? extends ModuleComponentArtifactMetadata> artifacts;
-        if (name.equals("compile") || name.equals("runtime") || name.equals("default") || name.equals("test")) {
-            if (metadata.isPomPackaging()) {
-                artifacts = ImmutableList.of();
-            } else {
-                String type = metadata.isKnownJarPackaging() ? "jar" : metadata.getPackaging();
-                artifacts = ImmutableList.of(new DefaultModuleComponentArtifactMetadata(metadata.getId(), new DefaultIvyArtifactName(metadata.getId().getModule(), type, type)));
-            }
-        } else if (metadata.isKnownJarPackaging()) {
+        if (metadata.isPomPackaging()) {
             artifacts = ImmutableList.of(new DefaultModuleComponentArtifactMetadata(metadata.getId(), new DefaultIvyArtifactName(metadata.getId().getModule(), "jar", "jar")));
-        } else if (metadata.isPomPackaging()) {
+        } else if (name.equals("compile") || name.equals("runtime") || name.equals("default") || name.equals("test")) {
+            String type = metadata.isKnownJarPackaging() ? "jar" : metadata.getPackaging();
+            artifacts = ImmutableList.of(new DefaultModuleComponentArtifactMetadata(metadata.getId(), new DefaultIvyArtifactName(metadata.getId().getModule(), type, type)));
+        } else if (metadata.isKnownJarPackaging()) {
             artifacts = ImmutableList.of(new DefaultModuleComponentArtifactMetadata(metadata.getId(), new DefaultIvyArtifactName(metadata.getId().getModule(), "jar", "jar")));
         } else {
             artifacts = ImmutableList.of();
