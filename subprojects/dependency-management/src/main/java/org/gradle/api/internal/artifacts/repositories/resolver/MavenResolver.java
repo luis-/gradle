@@ -222,13 +222,17 @@ public class MavenResolver extends ExternalResourceResolver<MavenModuleResolveMe
     private class MavenLocalRepositoryAccess extends LocalRepositoryAccess {
         @Override
         protected void resolveModuleArtifacts(MavenModuleResolveMetadata module, BuildableComponentArtifactsResolveResult result) {
-            if (!module.getVariants().isEmpty() || module.getVariantDerivationStrategy().derivesVariants()) {
+            if (module.isRelocated()) {
+                // Relocated modules have no artifacts
+                result.resolved(new FixedComponentArtifacts(Collections.emptyList()));
+            } else if (!module.getVariants().isEmpty() || module.getVariantDerivationStrategy().derivesVariants()) {
+                // Modules with variants or derived variants, artifacts are determined by looking at the metadata
                 result.resolved(new MetadataSourcedComponentArtifacts());
             } else if (module.isKnownJarPackaging()) {
+                // If we have no variant information and we recognize the packaging in the Maven metadata
+                // we can try to return the jar artifact
                 ModuleComponentArtifactMetadata artifact = module.artifact("jar", "jar", null);
                 result.resolved(new FixedComponentArtifacts(ImmutableSet.of(artifact)));
-            } else if (module.isRelocated()) {
-                result.resolved(new FixedComponentArtifacts(Collections.emptyList()));
             }
         }
 
