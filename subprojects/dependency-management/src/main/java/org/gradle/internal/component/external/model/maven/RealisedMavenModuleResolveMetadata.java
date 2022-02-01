@@ -209,20 +209,6 @@ public class RealisedMavenModuleResolveMetadata extends AbstractRealisedModuleCo
         return artifacts;
     }
 
-    private static ImmutableList<ModuleDependencyMetadata> filterDependencies(ModuleComponentIdentifier componentId, ConfigurationMetadata config, ImmutableList<MavenDependencyDescriptor> dependencies) {
-        ImmutableList.Builder<ModuleDependencyMetadata> filteredDependencies = ImmutableList.builder();
-        boolean isOptionalConfiguration = "optional".equals(config.getName());
-
-        for (MavenDependencyDescriptor dependency : dependencies) {
-            if (isOptionalConfiguration && includeInOptionalConfiguration(dependency)) {
-                filteredDependencies.add(new DefaultMavenModuleResolveMetadata.OptionalConfigurationDependencyMetadata(config, componentId, dependency));
-            } else if (include(dependency, config.getHierarchy())) {
-                filteredDependencies.add(contextualize(config, componentId, dependency));
-            }
-        }
-        return filteredDependencies.build();
-    }
-
     static ModuleDependencyMetadata contextualize(ConfigurationMetadata config, ModuleComponentIdentifier componentId, MavenDependencyDescriptor incoming) {
         ConfigurationBoundExternalDependencyMetadata dependency = new ConfigurationBoundExternalDependencyMetadata(config, componentId, incoming);
         dependency.alwaysUseAttributeMatching();
