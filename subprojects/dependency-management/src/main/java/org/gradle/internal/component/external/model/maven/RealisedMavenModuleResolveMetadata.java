@@ -29,7 +29,6 @@ import org.gradle.api.internal.attributes.ImmutableAttributes;
 import org.gradle.api.internal.model.NamedObjectInstantiator;
 import org.gradle.internal.Cast;
 import org.gradle.internal.component.external.descriptor.Configuration;
-import org.gradle.internal.component.external.descriptor.MavenScope;
 import org.gradle.internal.component.external.model.AbstractRealisedModuleComponentResolveMetadata;
 import org.gradle.internal.component.external.model.AdditionalVariant;
 import org.gradle.internal.component.external.model.ComponentVariant;
@@ -51,7 +50,6 @@ import org.gradle.internal.component.model.ModuleConfigurationMetadata;
 import org.gradle.internal.component.model.ModuleSources;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -222,22 +220,6 @@ public class RealisedMavenModuleResolveMetadata extends AbstractRealisedModuleCo
         ConfigurationBoundExternalDependencyMetadata dependency = new ConfigurationBoundExternalDependencyMetadata(config, componentId, incoming);
         dependency.alwaysUseAttributeMatching();
         return dependency;
-    }
-
-    private static boolean includeInOptionalConfiguration(MavenDependencyDescriptor dependency) {
-        MavenScope dependencyScope = dependency.getScope();
-        // Include all 'optional' dependencies in "optional" configuration
-        return dependency.isOptional()
-            && dependencyScope != MavenScope.Test
-            && dependencyScope != MavenScope.System;
-    }
-
-    private static boolean include(MavenDependencyDescriptor dependency, Collection<String> hierarchy) {
-        MavenScope dependencyScope = dependency.getScope();
-        if (dependency.isOptional()) {
-            return false;
-        }
-        return hierarchy.contains(dependencyScope.getLowerName());
     }
 
     private final NamedObjectInstantiator objectInstantiator;
