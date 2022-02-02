@@ -243,12 +243,6 @@ public class MavenResolver extends ExternalResourceResolver<MavenModuleResolveMe
         protected void resolveSourceArtifacts(MavenModuleResolveMetadata module, BuildableArtifactSetResolveResult result) {
             // Source artifacts are optional, so we need to probe for them remotely
         }
-
-        @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            // Need to assume that the artifact exists
-            return true;
-        }
     }
 
     private class MavenRemoteRepositoryAccess extends RemoteRepositoryAccess {
@@ -279,8 +273,11 @@ public class MavenResolver extends ExternalResourceResolver<MavenModuleResolveMe
         }
 
         @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            return createArtifactResolver(moduleSources).artifactExists((ModuleComponentArtifactMetadata)artifact, new DefaultResourceAwareResolveResult());
+        public Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            if (createArtifactResolver(moduleSources).artifactExists((ModuleComponentArtifactMetadata)artifact, new DefaultResourceAwareResolveResult())) {
+                return Existence.EXISTS;
+            }
+            return Existence.MISSING;
         }
     }
 

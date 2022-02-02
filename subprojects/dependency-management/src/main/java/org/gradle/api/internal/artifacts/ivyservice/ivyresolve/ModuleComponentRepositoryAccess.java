@@ -67,7 +67,11 @@ public interface ModuleComponentRepositoryAccess {
     /**
      * Checks the given modulesSources if the artifact exists.
      */
-    boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources);
+    Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources);
+
+    enum Existence {
+        MISSING, ASSUME_EXISTS, EXISTS;
+    }
 
     MetadataFetchingCost estimateMetadataFetchingCost(ModuleComponentIdentifier moduleComponentIdentifier);
 }

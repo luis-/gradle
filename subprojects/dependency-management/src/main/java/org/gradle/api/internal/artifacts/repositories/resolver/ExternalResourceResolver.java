@@ -418,6 +418,11 @@ public abstract class ExternalResourceResolver<T extends ModuleComponentResolveM
             return original;
         }
 
+        @Override
+        public Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return Existence.ASSUME_EXISTS;
+        }
+
         protected abstract void resolveModuleArtifacts(T module, BuildableComponentArtifactsResolveResult result);
 
         protected abstract void resolveMetaDataArtifacts(T module, BuildableArtifactSetResolveResult result);
@@ -450,11 +455,6 @@ public abstract class ExternalResourceResolver<T extends ModuleComponentResolveM
         @Override
         public void resolveArtifact(ComponentArtifactMetadata artifact, ModuleSources moduleSources, BuildableArtifactResolveResult result) {
 
-        }
-
-        @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            return false;
         }
 
         @Override
@@ -517,11 +517,6 @@ public abstract class ExternalResourceResolver<T extends ModuleComponentResolveM
             } catch (Exception e) {
                 result.failed(new ArtifactResolveException(artifact.getId(), e));
             }
-        }
-
-        @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            return true;
         }
 
         @Override

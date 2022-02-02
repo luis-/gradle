@@ -106,10 +106,19 @@ class RepositoryChainArtifactResolver implements ArtifactResolver, OriginArtifac
     @Override
     public boolean resolveOptionalArtifact(ComponentArtifactMetadata artifact, ModuleSources sources) {
         ModuleComponentRepository sourceRepository = findSourceRepository(sources);
-        if (!sourceRepository.getLocalAccess().artifactExists(artifact, sources)) {
-            return false;
+        ModuleComponentRepositoryAccess.Existence localExistence = sourceRepository.getLocalAccess().artifactExists(artifact, sources);
+        switch (localExistence) {
+            case MISSING:
+                // If we know it's missing, we don't need to resolve it
+                return false;
+            case ASSUME_EXISTS:
+                // If it might exist, let's check the remote repository and resolve it if it isn't missing.
+                return sourceRepository.getRemoteAccess().artifactExists(artifact, sources) != ModuleComponentRepositoryAccess.Existence.MISSING;
+            case EXISTS:
+            default:
+                // If it definitely exists, we should try to resolve it.
+                return true;
         }
-        return sourceRepository.getRemoteAccess().artifactExists(artifact, sources);
     }
 
     private ModuleComponentRepository findSourceRepository(ModuleSources sources) {

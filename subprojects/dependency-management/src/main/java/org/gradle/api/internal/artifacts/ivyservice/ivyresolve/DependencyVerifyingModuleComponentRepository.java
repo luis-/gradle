@@ -202,7 +202,7 @@ public class DependencyVerifyingModuleComponentRepository implements ModuleCompo
         }
 
         @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        public Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
             return delegate.artifactExists(artifact, moduleSources);
         }
 

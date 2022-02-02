@@ -191,7 +191,7 @@ public class ErrorHandlingModuleComponentRepository implements ModuleComponentRe
         }
 
         @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        public Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
             // TODO: Does this need to be wrapped in an operation?
             return delegate.artifactExists(artifact, moduleSources);
         }

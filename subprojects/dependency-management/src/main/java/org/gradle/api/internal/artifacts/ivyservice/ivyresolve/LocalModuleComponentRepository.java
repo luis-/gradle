@@ -102,8 +102,16 @@ public class LocalModuleComponentRepository extends BaseModuleComponentRepositor
         }
 
         @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            return false;
+        public Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            Existence existence = delegate.getLocalAccess().artifactExists(artifact, moduleSources);
+            switch (existence) {
+                case MISSING:
+                case EXISTS:
+                    return existence;
+                case ASSUME_EXISTS:
+                default:
+                    return delegate.getRemoteAccess().artifactExists(artifact, moduleSources);
+            }
         }
 
         @Override
@@ -139,8 +147,8 @@ public class LocalModuleComponentRepository extends BaseModuleComponentRepositor
         }
 
         @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            return false;
+        public Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return Existence.MISSING;
         }
 
         @Override

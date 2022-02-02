@@ -302,11 +302,11 @@ public class CachingModuleComponentRepository implements ModuleComponentReposito
         }
 
         @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+        public Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
             DefaultBuildableArtifactResolveResult result = new DefaultBuildableArtifactResolveResult();
             resolveArtifactFromCache(artifact, moduleSources, result);
             if (result.hasResult() && result.getFailure()!=null) {
-                return false;
+                return Existence.MISSING;
             } else {
                 return delegate.getLocalAccess().artifactExists(artifact, moduleSources);
             }
@@ -491,14 +491,18 @@ public class CachingModuleComponentRepository implements ModuleComponentReposito
         }
 
         @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            if (delegate.getRemoteAccess().artifactExists(artifact, moduleSources)) {
-                return true;
-            } else {
-                ModuleDescriptorHashModuleSource cachingModuleSource = findCachingModuleSource(moduleSources);
-                // TODO: This should have the places we checked
-                moduleArtifactCache.storeMissing(artifactCacheKey(artifact.getId()), Collections.emptyList(), cachingModuleSource.getDescriptorHash());
-                return false;
+        public Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            Existence remoteExistence = delegate.getRemoteAccess().artifactExists(artifact, moduleSources);
+            switch (remoteExistence) {
+                case ASSUME_EXISTS:
+                case EXISTS:
+                    return remoteExistence;
+                default:
+                case MISSING:
+                    ModuleDescriptorHashModuleSource cachingModuleSource = findCachingModuleSource(moduleSources);
+                    // TODO: This should include the places we checked
+                    moduleArtifactCache.storeMissing(artifactCacheKey(artifact.getId()), Collections.emptyList(), cachingModuleSource.getDescriptorHash());
+                    return Existence.MISSING;
             }
         }
 

@@ -185,9 +185,8 @@ public class StartParameterResolutionOverride {
         }
 
         @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            // assume the artifact exists since we do not know
-            return true;
+        public Existence artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
+            return Existence.ASSUME_EXISTS;
         }
 
         @Override

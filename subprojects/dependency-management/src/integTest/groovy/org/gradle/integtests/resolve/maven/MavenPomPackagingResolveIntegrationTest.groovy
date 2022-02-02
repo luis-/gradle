@@ -75,6 +75,7 @@ task retrieve(type: Copy, dependsOn: deleteDir) {
 
         when:
         server.resetExpectations()
+        projectARepo2.artifact.expectHead()
         run 'retrieve'
 
         then: // Uses cached artifacts

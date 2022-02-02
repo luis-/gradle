@@ -27,9 +27,7 @@ import org.gradle.internal.component.external.model.MetadataSourcedComponentArti
 import org.gradle.internal.component.external.model.ModuleComponentArtifactIdentifier;
 import org.gradle.internal.component.external.model.ModuleComponentArtifactMetadata;
 import org.gradle.internal.component.external.model.ivy.IvyModuleResolveMetadata;
-import org.gradle.internal.component.model.ComponentArtifactMetadata;
 import org.gradle.internal.component.model.ConfigurationMetadata;
-import org.gradle.internal.component.model.ModuleSources;
 import org.gradle.internal.hash.ChecksumService;
 import org.gradle.internal.hash.Hasher;
 import org.gradle.internal.reflect.Instantiator;
@@ -156,11 +154,6 @@ public class IvyResolver extends ExternalResourceResolver<IvyModuleResolveMetada
                 result.resolved(configuration.getArtifacts());
             }
         }
-
-        @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            return true;
-        }
     }
 
     private class IvyRemoteRepositoryAccess extends RemoteRepositoryAccess {
@@ -179,11 +172,6 @@ public class IvyResolver extends ExternalResourceResolver<IvyModuleResolveMetada
         protected void resolveSourceArtifacts(IvyModuleResolveMetadata module, BuildableArtifactSetResolveResult result) {
             // Probe for artifact with classifier
             result.resolved(findOptionalArtifacts(module, "source", "sources"));
-        }
-
-        @Override
-        public boolean artifactExists(ComponentArtifactMetadata artifact, ModuleSources moduleSources) {
-            return false;
         }
     }
 }
