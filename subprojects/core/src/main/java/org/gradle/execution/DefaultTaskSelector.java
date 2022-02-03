@@ -24,6 +24,8 @@ import org.gradle.api.specs.Spec;
 import org.gradle.execution.taskpath.ResolvedTaskPath;
 import org.gradle.execution.taskpath.TaskPathResolver;
 import org.gradle.util.internal.NameMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class DefaultTaskSelector extends TaskSelector {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTaskSelector.class);
     private final TaskNameResolver taskNameResolver;
     private final GradleInternal gradle;
     private final ProjectConfigurer configurer;
@@ -106,7 +109,9 @@ public class DefaultTaskSelector extends TaskSelector {
         Map<String, TaskSelectionResult> tasksByName = taskNameResolver.selectAll(taskPath.getProject(), !taskPath.isQualified());
         NameMatcher matcher = new NameMatcher();
         String actualName = matcher.find(taskPath.getTaskName(), tasksByName.keySet());
+
         if (actualName != null) {
+            LOGGER.info("Abbreviated task '{}' expanded to '{}'", path, actualName);
             return new TaskSelection(taskPath.getProject().getPath(), taskPath.getPrefix() + actualName, tasksByName.get(actualName));
         }
 

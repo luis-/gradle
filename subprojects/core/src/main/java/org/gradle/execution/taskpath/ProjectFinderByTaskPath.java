@@ -19,11 +19,16 @@ package org.gradle.execution.taskpath;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.internal.project.ProjectInternal;
+import org.gradle.execution.DefaultTaskSelector;
 import org.gradle.util.internal.NameMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 public class ProjectFinderByTaskPath {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectFinderByTaskPath.class);
+
 
     public ProjectInternal findProject(String projectPath, ProjectInternal startFrom) {
         if (projectPath.equals(Project.PATH_SEPARATOR)) {
@@ -40,11 +45,11 @@ public class ProjectFinderByTaskPath {
             NameMatcher matcher = new NameMatcher();
             Project child = matcher.find(pattern, children);
             if (child != null) {
+                LOGGER.info("Abbreviated project '{}' expanded to '{}'", pattern, child.getName());
                 current = child;
-                continue;
+            } else {
+                throw new ProjectLookupException(matcher.formatErrorMessage("project", current));
             }
-
-            throw new ProjectLookupException(matcher.formatErrorMessage("project", current));
         }
 
         return (ProjectInternal) current;
