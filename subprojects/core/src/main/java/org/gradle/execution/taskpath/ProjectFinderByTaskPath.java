@@ -19,7 +19,6 @@ package org.gradle.execution.taskpath;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.internal.project.ProjectInternal;
-import org.gradle.execution.DefaultTaskSelector;
 import org.gradle.util.internal.NameMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
